@@ -2,7 +2,7 @@
 ###Links:
 - **[Workshop Suvey](https://www.microsoftevents.com/profile/7831668)**
 - **[Workshop Slides](https://wviriyablob.blob.core.windows.net/devcamp/DevCampSlides.zip)**
-- **[Azure Pass](https://1drv.ms/u/s!AsHLBSbUO0UojYlw0TWxc7Kgi8OYvA)**
+- **[Azure Pass](https://1drv.ms/x/s!AsHLBSbUO0UojYlw0TWxc7Kgi8OYvA?e=yFQs5O)**
 - Redeem Azure Pass **[Here](https://www.microsoftazurepass.com/)**
 - **[Lab Instruction](https://aksworkshop.io)**
 

@@ -19,9 +19,9 @@ On lab insturction ***Section 2.1*** use code below to provision your AKS cluste
      #Create an AKS Cluster
      az aks create -g $RG \
      -n $AKS \
-     -l $DC
-     -c 2
-     --load-balancer-sku basic 
+     -l $DC \
+     -c 2 \
+     --load-balancer-sku basic \
      --generate-ssh-keys
 
      #Connect to your AKS Cluster

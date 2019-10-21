@@ -1,12 +1,12 @@
-#Developer Base Camp NZ - Lab
-###Links:
+# Developer Base Camp NZ - Lab
+### Links:
 - **[Workshop Suvey](https://www.microsoftevents.com/profile/7831668)**
 - **[Workshop Slides](https://wviriyablob.blob.core.windows.net/devcamp/DevCampSlides.zip)**
 - **[Azure Pass](https://1drv.ms/x/s!AsHLBSbUO0UojYlw0TWxc7Kgi8OYvA?e=yFQs5O)**
 - Redeem Azure Pass **[Here](https://www.microsoftazurepass.com/)**
 - **[Lab Instruction](https://aksworkshop.io)**
 
-###Important Notice!
+## Important Notice!
 On lab insturction ***Section 2.1*** use code below to provision your AKS cluster (**[az aks create](https://docs.microsoft.com/en-us/cli/azure/aks?view=azure-cli-latest#az-aks-create)**)
 
      export RG=<resource-group>

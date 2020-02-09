@@ -1,0 +1,33 @@
+{
+     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+     "contentVersion": "1.0.0.0",
+     "parameters": {
+          "environment": {
+               "value": "dev"
+           },
+           "appname": {
+               "value": "[myappname]"
+           },
+           "container": {
+               "value": "[mycontainername]"
+           },
+           "registryServer": {
+               "value": "[myacr].azurecr.io"
+           },
+           "acrpassword": {
+               "reference": {
+                    "keyvault": {
+                         "id": "/subscriptions/c1a37f4e-c839-41b3-a627-5ea61b973cd1/resourceGroups/ftademo-rg/providers/Microsoft.KeyVault/vaults/azninja"
+                    },
+                    "secretName": "acrpassword"
+               }
+           },
+           "tags": {
+               "value": 
+                         {
+                         "costcenter": "123456789",
+                         "department": "IT"
+                         }
+           }
+     }
+}

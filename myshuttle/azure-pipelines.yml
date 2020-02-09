@@ -1,0 +1,137 @@
+# Maven package Java project Web App to Linux on Azure
+# Build your Java project and deploy it to Azure as a Linux web app
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/java
+
+trigger:
+- master
+
+variables:
+
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
+
+  appname: 'myshuttle-wv'
+  
+  containername: 'myshuttleweb'
+  
+  acrloginserver: 'azninja.azurecr.io'
+
+stages:
+- stage: Build
+  displayName: Build stage
+  jobs:
+  - job: MavenPackageAndPublishArtifacts
+    displayName: Maven Package and Publish Artifacts
+    pool:
+      vmImage: $(vmImageName)
+    
+    steps:
+    - task: Maven@3
+      displayName: 'Maven Package'
+      inputs:
+        mavenPomFile: 'pom.xml'
+        options: '-DskipITs'
+        publishJUnitResults: false
+        mavenAuthenticateFeed: true
+
+    - task: CopyFiles@2
+      displayName: 'Copy Files to artifact staging directory'
+      inputs:
+        SourceFolder: '$(system.defaultworkingdirectory)'
+        Contents: |
+          target/myshuttledev*.*
+          target/test-jars/*
+          *.release.*
+          startup/run.sh
+          templates/*.*
+        TargetFolder: '$(build.artifactstagingdirectory)'
+      condition: succeededOrFailed()
+
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish Artifact: drop'
+      inputs:
+        path: '$(build.artifactstagingdirectory)'
+        artifact: drop
+      condition: succeededOrFailed()
+
+    - task: DockerCompose@0
+      displayName: Build
+      inputs:
+        azureSubscription: 'Victor-DevOps'
+        azureContainerRegistry: '{"loginServer":"azninja.azurecr.io", "id" : "/subscriptions/c1a37f4e-c839-41b3-a627-5ea61b973cd1/resourceGroups/ftademo-rg/providers/Microsoft.ContainerRegistry/registries/azninja"}'
+        action: 'Build services'
+        additionalImageTags: '$(Build.BuildId)'
+        includeLatestTag: true
+
+    - task: DockerCompose@0
+      displayName: Push
+      inputs:
+        azureSubscription: 'Victor-DevOps'
+        azureContainerRegistry: '{"loginServer":"azninja.azurecr.io", "id" : "/subscriptions/c1a37f4e-c839-41b3-a627-5ea61b973cd1/resourceGroups/ftademo-rg/providers/Microsoft.ContainerRegistry/registries/azninja"}'
+        action: 'Push services'
+        additionalImageTags: '$(Build.BuildId)'
+        includeLatestTag: true
+
+- stage: Test
+  displayName: Test stage
+  dependsOn: Build
+  condition: succeeded()
+  jobs:
+  - deployment: DeployLinuxWebApp
+    displayName: Deploy Linux Web App
+    environment: 'Test'
+    pool: 
+      vmImage: $(vmImageName)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureResourceGroupDeployment@2
+            displayName: 'Azure Deployment:Create Or Update Resource Group action on ftademo-rg'
+            inputs:
+              azureSubscription: 'Victor-DevOps'
+              resourceGroupName: 'ftademo-rg'
+              location: 'Australia East'
+              csmFile: '$(Pipeline.Workspace)/drop/templates/deployment.json'
+              csmParametersFile: '$(Pipeline.Workspace)/drop/templates/deployment.parameters.json'
+              overrideParameters: '-environment $(Environment.Name) -appname $(appname) -container $(containername) -registryServer $(acrloginserver)'
+          
+
+          
+          - task: AzureWebAppContainer@1
+            displayName: 'Azure Web App on Container Deploy: $(appname)'
+            inputs:
+              azureSubscription: 'Victor-DevOps'
+              appName: '$(appname)'
+              containers: '$(acrloginserver)/$(containername):latest'
+
+- stage: Prod
+  displayName: Prod stage
+  dependsOn: Test
+  condition: succeeded()
+  jobs:
+  - deployment: DeployLinuxWebApp
+    displayName: Deploy Linux Web App
+    environment: 'Prod'
+    pool: 
+      vmImage: $(vmImageName)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureResourceGroupDeployment@2
+            displayName: 'Azure Deployment:Create Or Update Resource Group action on ftademo-rg'
+            inputs:
+              azureSubscription: 'Victor-DevOps'
+              resourceGroupName: 'ftademo-rg'
+              location: 'Australia East'
+              csmFile: '$(Pipeline.Workspace)/drop/templates/deployment.json'
+              csmParametersFile: '$(Pipeline.Workspace)/drop/templates/deployment.parameters.json'
+              overrideParameters: '-environment $(Environment.Name) -appname $(appname) -container $(containername) -registryServer $(acrloginserver)'
+          - task: AzureWebAppContainer@1
+            displayName: 'Azure Web App on Container Deploy: $(appname)'
+            inputs:
+              azureSubscription: 'Victor-DevOps'
+              appName: '$(appname)'
+              containers: '$(acrloginserver)/$(containername):latest'

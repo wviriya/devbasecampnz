@@ -1,0 +1,96 @@
+{
+     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+     "contentVersion": "1.0.0.0",
+     "parameters": {
+         "environment": {
+             "type": "string"
+         },
+         "appname": {
+             "type": "string"
+         },
+         "container": {
+             "type": "string"
+         },
+         "registryServer": {
+             "type": "string"
+         },
+         "acrpassword": {
+             "type": "string"
+         },
+         "tags": {
+             "type": "object",
+             "defaultvalue": {
+                 "costcenter": "123456789",
+                 "department": "IT"
+             }
+         }
+     },
+     "variables": {
+         "appPlanTier": "PremiumV2",
+         "appPlanSku": "P1v2",
+         "appPlanWorkerSizeId": 3,
+         "numberOfWorkers": 1,
+         "appPlanKind": "linux",
+         "appPlanName": "[concat(parameters('appname'), '-', parameters('environment'), '-', 'asp')]",
+         "registryURL": "[concat('https://', parameters('registryServer'))]",
+	    "dockerImageName": "[concat(parameters('registryServer'),'/', parameters('container'),':latest')]"
+     },
+     "resources": [
+          {
+               "type": "Microsoft.Web/serverfarms",
+               "apiVersion": "2016-09-01",
+               "sku": {
+                    "Tier": "[variables('appPlanTier')]",
+                    "Name": "[variables('appPlanSku')]"
+               },
+               "kind": "[variables('appPlanKind')]",
+               "name": "[variables('appPlanName')]",
+               "location": "[resourceGroup().location]",
+               "tags": "[parameters('tags')]",
+               "properties": {
+                    "name": "[variables('appPlanName')]",
+                    "workerSizeId": "[variables('appPlanWorkerSizeId')]",
+                    "reserved": true,
+                    "numberOfWorkers": "[variables('numberOfWorkers')]"
+               }
+          },
+          {
+               "apiVersion": "2018-02-01",
+               "kind": "app,linux,container",
+               "name": "[parameters('appName')]",
+               "type": "Microsoft.Web/sites",
+               "tags": "[parameters('tags')]",
+               "location": "[resourceGroup().location]",
+               "dependsOn": [
+                    "[variables('appPlanName')]"
+                ],
+               "properties": {
+                   "name": "[parameters('appName')]",
+                   "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appPlanName'))]",
+                   "siteConfig": {
+                       "alwaysOn": true,
+                       "appSettings": [
+                           {
+                               "name": "WEBSITES_ENABLE_APP_SERVICE_STORAGE",
+                               "value": "true"
+                           },
+                           {
+                               "name": "DOCKER_REGISTRY_SERVER_URL",
+                               "value": "[variables('registryURL')]"
+                           },
+                           {
+                               "name": "DOCKER_REGISTRY_SERVER_USERNAME",
+                               "value": "azninja"
+                           },
+                           {
+                               "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
+                               "value": "[parameters('acrpassword')]"
+                           }
+                       ],
+                       "linuxFxVersion": "[concat('DOCKER|', variables('dockerImageName'))]"
+                   }
+               }
+           }
+     ],
+  "outputs": {}
+}

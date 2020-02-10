@@ -1,7 +1,9 @@
 # Developer Base Camp NZ - Lab
 <!--- (https://1drv.ms/x/s!As)HLBSbUO0UojYlw0TWxc7Kgi8OYvA?e=yFQs5O) --->
 ### Links:
-- **[Workshop Suvey](https://www.microsoftevents.com/profile/7840427)**
+- **[Workshop Suvey - AKL](https://www.microsoftevents.com/profile/9337171)**
+- **[Workshop Suvey - WLG](https://www.microsoftevents.com/profile/9336924)**
+- **[Workshop Suvey - CHC](https://www.microsoftevents.com/profile/9327842)**
 - **[Workshop Slides](https://wviriyablob.blob.core.windows.net/devcamp/DevCampSlides.zip)**
 - **[Azure Pass](https://1drv.ms/x/s!AsHLBSbUO0UojYlw0TWxc7Kgi8OYvA?e=v676wN)**
 - Redeem Azure Pass **[Here](https://www.microsoftazurepass.com/)**

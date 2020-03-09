@@ -5,7 +5,7 @@
 - **[Workshop Suvey - WLG](https://www.microsoftevents.com/profile/9336924)**
 - **[Workshop Suvey - CHC](https://www.microsoftevents.com/profile/9327842)**
 - **[Workshop Slides](https://wviriyablob.blob.core.windows.net/devcamp/DevCampSlides.zip)**
-- **[Azure Pass](https://1drv.ms/x/s!AsHLBSbUO0UojYo9FZo5mM9k_X1oCw?e=WqSKJp)**
+- **[Azure Pass](https://1drv.ms/x/s!AsHLBSbUO0UojYlw0TWxc7Kgi8OYvA?e=v676wN)**
 - Redeem Azure Pass **[Here](https://www.microsoftazurepass.com/)**
 - **[Lab Instruction](https://aksworkshop.io)**
 
